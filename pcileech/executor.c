@@ -121,6 +121,7 @@ VOID Exec_ConsoleRedirect(_In_ QWORD ConsoleBufferAddr_InputStream, _In_ QWORD C
     }
     // buffer syncer
     while(TRUE) {
+        SwitchToThread();
         result = dwPID ?
             VmmPrx_MemReadEx(dwPID, ConsoleBufferAddr_OutputStream, pd->pbDataOSConsoleBuffer, 0x1000, NULL, VMMDLL_FLAG_NOCACHE) :
             DeviceReadMEM(ConsoleBufferAddr_OutputStream, pd->pbDataOSConsoleBuffer, 0x1000, 0);
@@ -185,7 +186,7 @@ VOID Exec_Callback(_Inout_ PHANDLE phCallback)
     LeechCore_Write(ctxMain->pk->DMAAddrPhysical + EXEC_IO_DMAOFFSET_IS, (PBYTE)&ph->is, 0x1000);
 }
 
-VOID Exec_CallbackClose(_In_ HANDLE hCallback)
+VOID Exec_CallbackClose(_In_opt_ HANDLE hCallback)
 {
     PEXEC_HANDLE ph = hCallback;
     if(hCallback == NULL) { return; }

@@ -45,25 +45,16 @@ PCILeech supports both hardware based and software based memory acqusition metho
 
 Please find a summary of the supported hardware based memory acquisition methods listed below. All hardware based memory acquisition methods are supported on both Windows and Linux. The FPGA based methods however sports a slight performance penalty on Linux and will max out at approx: 90MB/s compared to 150MB/s on Windows.
 
-| Device                                    | Type | Interface | Speed | 64-bit memory access | PCIe TLP access |
-| ---------------------------------------------------------------------- | ------- | ---- | ------- | --- | --- |
-| [AC701/FT601](https://github.com/ufrisk/LeechCore/wiki/Device_FPGA)    | FPGA    | USB3 | 150MB/s | Yes | Yes |
-| [PCIeScreamer](https://github.com/ufrisk/LeechCore/wiki/Device_FPGA)   | FPGA    | USB3 | 100MB/s | Yes | Yes |
-| [SP605/FT601](https://github.com/ufrisk/LeechCore/wiki/Device_FPGA)    | FPGA    | USB3 |  75MB/s | Yes | Yes |
-| [SP605/TCP](https://github.com/ufrisk/LeechCore/wiki/Device_SP605TCP)  | FPGA  | TCP/IP | 100kB/s | Yes | Yes |
-| [USB3380-EVB](https://github.com/ufrisk/LeechCore/wiki/Device_USB3380) | USB3380 | USB3 | 150MB/s | No  | No  |
-| [PP3380](https://github.com/ufrisk/LeechCore/wiki/Device_USB3380)      | USB3380 | USB3 | 150MB/s | No  | No  |
-| [DMA patched HP iLO](https://github.com/ufrisk/LeechCore/wiki/Device_iLO) | TCP/IP | TCP | 1MB/s  | Yes | No  |
-
-#### Recommended adapters:
-* PE3B - ExpressCard to mini-PCIe.
-* PE3A - ExpressCard to PCIe.
-* ADP - PCIe to mini-PCIe.
-* P15S-P15F - M.2 Key A+E to mini-PCIe.
-* Sonnet Echo ExpressCard Pro - Thunderbolt to ExpressCard.
-* Apple Thunderbolt3 (USB-C) - Thunderbolt2 dongle.
-
-Please note that other adapters may also work.
+| Device                                      | Type | Interface | Speed | 64-bit memory access | PCIe TLP access |
+| ---------------------------------------------------------------------- | ------- | ------ | ------- | --- | --- |
+| [AC701/FT601](https://github.com/ufrisk/LeechCore/wiki/Device_FPGA)    | FPGA    | USB3   | 150MB/s | Yes | Yes |
+| [PCIeScreamer](https://github.com/ufrisk/LeechCore/wiki/Device_FPGA)   | FPGA    | USB3   | 100MB/s | Yes | Yes |
+| [SP605/FT601](https://github.com/ufrisk/LeechCore/wiki/Device_FPGA)    | FPGA    | USB3   |  75MB/s | Yes | Yes |
+| [SP605/TCP](https://github.com/ufrisk/LeechCore/wiki/Device_SP605TCP)  | FPGA    | TCP/IP | 100kB/s | Yes | Yes |
+| [NeTV2/UDP](https://github.com/ufrisk/LeechCore/wiki/Device_RawUDP)    | FPGA    | UDP/IP |   7MB/s | Yes | Yes |
+| [USB3380-EVB](https://github.com/ufrisk/LeechCore/wiki/Device_USB3380) | USB3380 | USB3   | 150MB/s | No  | No  |
+| [PP3380](https://github.com/ufrisk/LeechCore/wiki/Device_USB3380)      | USB3380 | USB3   | 150MB/s | No  | No  |
+| [DMA patched HP iLO](https://github.com/ufrisk/LeechCore/wiki/Device_iLO) | BMC  | TCP/IP |   1MB/s | Yes | No  |
 
 ### Software based memory aqusition methods:
 
@@ -73,6 +64,7 @@ Please find a summary of the supported software based memory acquisition methods
 | -------------------------- | ---------------- | ------------- |
 | [RAW physical memory dump](https://github.com/ufrisk/LeechCore/wiki/Device_File)         | File             | Yes |
 | [Full Microsoft Crash Dump](https://github.com/ufrisk/LeechCore/wiki/Device_File)        | File             | Yes |
+| [Full ELF Core Dump](https://github.com/ufrisk/LeechCore/wiki/Device_File)               | File             | Yes |
 | [Hyper-V Saved State](https://github.com/ufrisk/LeechCore/wiki/Device_HyperV_SavedState) | File             | No  |
 | [TotalMeltdown](https://github.com/ufrisk/LeechCore/wiki/Device_Totalmeltdown)           | CVE-2018-1038    | No  |
 | [DumpIt /LIVEKD](https://github.com/ufrisk/LeechCore/wiki/Device_DumpIt)                 | Live&nbsp;Memory | No  |
@@ -128,11 +120,11 @@ Dump all memory between addresses min and max, don't stop on failed pages. Nativ
 Force the usage of a specific device (instead of default auto detecting it). The pmem device is not auto detected.
 * ` pcileech.exe pagedisplay -min 0x1000 -device pmem `
 
-Dump remote memory from a remote LeechAgent running as `SYSTEM` on the computer `computer.ad.contoso.com` using connection encrypted and mutually authenticated by kerberos.
-* ` pcileech.exe dump -device pmem -remote rpc://computer$@ad.contoso.com:computer.ad.contoso.com `
+Dump remote memory from a remote LeechAgent using connection encrypted and mutually authenticated by kerberos.
+* ` pcileech.exe dump -device pmem -remote rpc://computer$@ad.contoso.com `
 
-Execute the Python analysis script `example-find-rwx.py` on the remote computer `computer.ad.contoso.com` using the LeechAgent embedded Python environment.
-* ` pcileech.exe agent-execpy -in example-find-rwx.py -device pmem -remote rpc://computer$@ad.contoso.com:computer.ad.contoso.com `
+Execute the Python analysis script `find-rwx.py` on a remote computer using the LeechAgent embedded Python environment.
+* ` pcileech.exe agent-execpy -in find-rwx.py -device pmem -remote rpc://computer$@ad.contoso.com `
 
 Dump memory using the the reported "TotalMeltdown" [Windows 7/2008R2 x64 PML4 page table permission vulnerability](https://blog.frizk.net/2018/03/total-meltdown.html).
 * ` pcileech.exe dump -out memdump_win7.raw -device totalmeltdown -v -force `
@@ -177,7 +169,7 @@ v1.0
 v1.1-v3.6
 * Various updates. please see individual relases for more information.
 
-[v4.0](https://github.com/ufrisk/pcileech/releases/tag/v4.0)
+v4.0
 * Major cleanup and internal refactorings.
 * FPGA max memory auto-detect and more stable dumping strategy.
 * New stable Windows 10 kernel injects with FPGA hardware on non-virtualization based security systems.
@@ -191,5 +183,16 @@ v1.1-v3.6
 * Multiple other changes and syntax updates.
 
 v4.1
-* Project upgrade to Visual Studio 2019.
 * LeechAgent support - remote memory acquisition and analysis.
+
+[v4.2](https://github.com/ufrisk/pcileech/releases/tag/v4.2)
+* Signature updates:
+  * Linux kernel module - LINUX_X64_48 (latest versions)
+  * Win10 1903 kernel module - WIN10_X64_2 (requires windows version of PCILeech)
+  
+[v4.3](https://github.com/ufrisk/pcileech/releases/tag/v4.3)
+* Bug fixes.
+* Support for new device (NeTV2 / RawUDP) via LeechCore library.
+
+Latest:
+* Bug fixes and stability improvements.
